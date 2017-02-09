@@ -21,4 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Pomo.Infrastructure.Persistance.Raven\Pomo.Infrastructure.Persistance.Raven.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\scripts\lib\" />
+  </ItemGroup>
 </Project>

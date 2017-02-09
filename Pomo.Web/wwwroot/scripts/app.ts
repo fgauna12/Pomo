@@ -1,14 +1,5 @@
-import { Component } from "@angular/core"
-import { MyModel } from "./model"
+/// <reference path="../node_modules/@types/angular/index.d.ts" />
 
-@Component({
-    selector: `my-app`,
-    template: `<div>Hello from </div>`
-})
-
-export class MyApp {
-    model = new MyModel();
-    getCompiler() {
-        return this.model.compiler;
-    }
+namespace app {
+    angular.module("app", []);
 }
