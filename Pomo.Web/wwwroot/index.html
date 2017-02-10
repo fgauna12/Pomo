@@ -6,11 +6,22 @@
     <title>Hello TypeScript + Angular</title>
     <script src="scripts/lib/angular.min.js"></script>
     <script src="scripts/app.js"></script>
+    
+    <!-- Controllers -->
     <script src="scripts/shell/shell.js"></script>
+    
+    <!-- Services -->
+    <script src="scripts/pomodoro/pomodoroService.js"></script>
 </head>
 <body ng-app="app">
     <div ng-controller="ShellController as vm">
         <div>{{vm.title}}</div>
+        <div ng-repeat="pomodoro in vm.pomodoros" ng-if="vm.pomodoros.length">
+            <div>{{pomodoro.id}}</div>
+        </div>
+        <div ng-show="!vm.pomorodos.length">
+            No pomodoros
+        </div>
     </div>
 </body>
 </html>
