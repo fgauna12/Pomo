@@ -1,8 +1,7 @@
 var app;
 (function (app) {
-    "use strict";
-    var ShellController = (function () {
-        function ShellController($scope, pomodoroService) {
+    var PomodorosController = (function () {
+        function PomodorosController($scope, pomodoroService) {
             var _this = this;
             this.$scope = $scope;
             this.pomodoroService = pomodoroService;
@@ -11,12 +10,12 @@ var app;
                     _this.pomodoros = pagedResponse.results;
                 });
             };
-            this.title = "Hello World";
+            this.title = "Hello World Dood";
             this.init();
         }
-        return ShellController;
+        return PomodorosController;
     }());
-    ShellController.$inject = ['$scope', 'pomodoroService'];
-    angular.module("app").controller('ShellController', ShellController);
+    PomodorosController.$inject = ['$scope', 'pomodoroService'];
+    angular.module('app').controller('PomodorosController', PomodorosController);
 })(app || (app = {}));
-//# sourceMappingURL=shell.js.map
+//# sourceMappingURL=pomodorosController.js.map

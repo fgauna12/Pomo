@@ -6,34 +6,46 @@ Click here to learn more. http://go.microsoft.com/fwlink/?LinkId=518007
 
 var gulp = require('gulp');
 var del = require('del');
-var concat = require('gulp-concat') //for dist only
-var ngAnnotate = require('gulp-ng-annotate') //for dist only
+var concat = require('gulp-concat'); //for dist only
+var ngAnnotate = require('gulp-ng-annotate'); //for dist only
 var sass = require('gulp-sass');
 var prefix = require('gulp-autoprefixer')
+var exec = require('child_process').exec;
 
+var typeScriptFiles = 'app/**/*.ts';
 var paths = {
-    scripts: ['app/**/*.js','app/**/*.ts', 'app/**/*.map'],
+    scripts: ['app/**/*.js',typeScriptFiles, 'app/**/*.map'],
+    views : ['index.html', 'app/**/*.html'],
     libs: [
         //Angular
-        'node_modules/angular/angular.min.js',
-        'node_modules/@types/angular/index.d.ts',
+        'node_modules/angular/angular.min.js',        
         //Angular UI Router
         'node_modules/angular-ui-router/release/angular-ui-router.js',
-        'node_modules/@types/angular-ui-router'
+        //All Typings
+        'node_modules/@types/**/*.d.ts',
     ],
     styles: {
         src: 'app/assets/styles',
         files: 'app/assets/styles/**/*.scss',
         dest: 'wwwroot/styles'
-    }
+    },
+    appDestination : 'wwwroot/app'
 };
 
 gulp.task('lib', function () {
-    gulp.src(paths.libs).pipe(gulp.dest('wwwroot/scripts/lib'));
+    gulp.src(paths.libs).pipe(gulp.dest('wwwroot/lib'));
 });
 
 gulp.task('clean', function () {
-    return del(['wwwroot/scripts/**/*']).then(['wwwroot/styles/**/*']);
+    return del(['wwwroot/app/**/*']).then(['wwwroot/styles/**/*']);
+});
+
+gulp.task('typescript', function(cb) { 
+    exec('tsc', function(err, stdout, stderr){
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    });
 });
 
 // A display error function, to format and make custom errors more uniform
@@ -75,16 +87,23 @@ gulp.task('sass', function (){
 });
 
 /* https://medium.com/@dickeyxxx/best-practices-for-building-angular-js-apps-266c1a4a6917#.a19vsw2wi */
-gulp.task('default', ['lib', 'sass'], function () {
-    gulp.src(paths.scripts)
-        .pipe(gulp.dest('wwwroot/scripts'));
+gulp.task('default', ['lib', 'sass', 'typescript'], function () {
+    gulp.src(paths.scripts.concat(paths.views))
+        .pipe(gulp.dest(paths.appDestination));
 
-    // // Watch the files in the paths object, and when there is a change, fun the functions in the array
-	// gulp.watch(paths.styles.files, ['sass'])
-    // // Also when there is a change, display what file was changed, only showing the path after the 'sass folder'
-	// .on('change', function(evt) {
-	// 	console.log(
-	// 		'[watcher] File ' + evt.path.replace(/.*(?=sass)/,'') + ' was ' + evt.type + ', compiling...'
-	// 	);
-	// });
+    // Watch the files in the paths object, and when there is a change, fun the functions in the array
+	gulp.watch(paths.styles.files, ['sass'])
+    // Also when there is a change, display what file was changed, only showing the path after the 'sass folder'
+	.on('change', function(evt) {
+		console.log(
+			'[watcher] File ' + evt.path+ ' was ' + evt.type + ', compiling...'
+		);
+	});
+
+    gulp.watch(typeScriptFiles, ['typescript'])
+    .on('change', function(evt) {		
+        console.log(
+			'[watcher] File ' + evt.path + ' was ' + evt.type + ', compiling...'
+		);
+	});
 });

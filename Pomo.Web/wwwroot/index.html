@@ -1,32 +1,27 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
-    
     <title>Hello TypeScript + Angular</title>
-
     <!-- CSS -->
     <link rel="stylesheet" href="styles/main.css">
-
     <!-- JS Libraries -->
-    <script src="scripts/lib/angular.min.js"></script>
-    <script src="scripts/app.js"></script> 
-
+    <script src="lib/angular.min.js"></script>
+    <script src="lib/angular-ui-router.js"></script>
+    <script src="app/app.js"></script>
+    <script src="app/router.js"></script>
     <!-- Controllers -->
-    <script src="scripts/shell/shell.js"></script>
-    
+    <script src="app/shell/shell.js"></script>
+    <script src="app/pomodoro/pomodorosController.js"></script>
     <!-- Services -->
-    <script src="scripts/pomodoro/pomodoroService.js"></script>
+    <script src="app/pomodoro/pomodoroService.js"></script>
 </head>
+
 <body ng-app="app">
-    <div ng-controller="ShellController as vm">
-        <div>{{vm.title}}</div>
-        <div ng-repeat="pomodoro in vm.pomodoros" ng-if="vm.pomodoros.length">
-            <div>{{pomodoro.id}}</div>
-        </div>
-        <div ng-show="!vm.pomorodos.length">
-            No pomodoros
-        </div>
+    <div ng-if="false">
+        <div>Loading</div>
     </div>
+    <ui-view></ui-view>
 </body>
 </html>

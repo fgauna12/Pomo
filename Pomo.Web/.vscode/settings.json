@@ -7,6 +7,10 @@
         "**/.DS_Store": true,
         "bin": true,
         "Properties": true,
-        "obj": true
+        "obj": true,
+        "app/**/*.js": true,
+        "app/**/*.map": true,
+        "wwwroot/**/*.ts": true,
+        "wwwroot/**/*.map": true
     }
 }

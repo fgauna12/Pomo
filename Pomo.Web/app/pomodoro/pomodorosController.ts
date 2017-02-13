@@ -1,13 +1,11 @@
 
 namespace app {
-    "use strict";
-
-    class ShellController {
+    class PomodorosController {
         title: string;
         pomodoros: IPomodoro[];
         static $inject: Array<string> = ['$scope', 'pomodoroService'];
         constructor(public $scope: angular.IScope, public pomodoroService: app.IPomodoroService) {
-            this.title = "Hello World";
+            this.title = "Hello World Dood";
             this.init();
         }
 
@@ -16,9 +14,7 @@ namespace app {
                 this.pomodoros = pagedResponse.results;
             });
         }
+    } 
 
-    }
-
-    angular.module("app").controller('ShellController', ShellController);
+    angular.module('app').controller('PomodorosController', PomodorosController);
 }
-
