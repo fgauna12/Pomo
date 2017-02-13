@@ -10,10 +10,15 @@ var concat = require('gulp-concat') //for dist only
 var ngAnnotate = require('gulp-ng-annotate') //for dist only
 
 var paths = {
-    scripts: ['scripts/**/*.js','scripts/**/*.ts', 'scripts/**/*.map'],
+    scripts: ['app/**/*.js','app/**/*.ts', 'app/**/*.map'],
     libs: [
+        //Angular
         'node_modules/angular/angular.min.js',
-        'node_modules/@types/angular/index.d.ts'
+        'node_modules/@types/angular/index.d.ts',
+        //Angular UI Router
+        'node_modules/angular-ui-router/release/angular-ui-router.js',
+        'node_modules/@types/angular-ui-router',
+        
     ]
 };
 
