@@ -6,7 +6,7 @@ namespace app {
                 url : '',
                 controller: 'ShellController',
                 controllerAs : 'vm',
-                templateUrl : 'app/shell/shell.html',
+                templateUrl : 'shell/shell.html',
                 abstract: true
             })
             .state('shell.pomodoros', <angular.ui.IState>
@@ -14,7 +14,7 @@ namespace app {
                 url: '/pomodoros',
                 controller : 'PomodorosController',
                 controllerAs : 'vm',
-                templateUrl : 'app/pomodoro/pomodoros.html'
+                templateUrl : 'pomodoro/pomodoros.html'
             });
 
             $urlRouterProvider.otherwise('/pomodoros');

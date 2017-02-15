@@ -10,7 +10,6 @@ namespace app {
         static $inject: Array<string> = ['$http'];
         
         constructor(public $http: angular.IHttpService) {
-            var frank2 = 'frank';
         }
 
         public getAll(): angular.IPromise<IPagedResult<IPomodoro>> {

@@ -1,109 +1,89 @@
-﻿/// <binding AfterBuild='default' Clean='clean' />
-/*
-This file is the main entry point for defining Gulp tasks and using Gulp plugins.
-Click here to learn more. http://go.microsoft.com/fwlink/?LinkId=518007
-*/
+"use strict";
 
-var gulp = require('gulp');
-var del = require('del');
-var concat = require('gulp-concat'); //for dist only
-var ngAnnotate = require('gulp-ng-annotate'); //for dist only
-var sass = require('gulp-sass');
-var prefix = require('gulp-autoprefixer')
-var exec = require('child_process').exec;
+var gulp        = require('gulp');
+var browserSync = require('browser-sync').create();
+var sass        = require('gulp-sass');
+var tsc         = require('gulp-typescript');
+var tsProject   = tsc.createProject('tsconfig.json');
+var Config      = require('./gulpfile.config');
+var del         = require('del');
+var sourcemaps  = require('gulp-sourcemaps');
 
-var typeScriptFiles = 'app/**/*.ts';
-var paths = {
-    scripts: ['app/**/*.js',typeScriptFiles, 'app/**/*.map'],
-    views : ['index.html', 'app/**/*.html'],
-    libs: [
-        //Angular
-        'node_modules/angular/angular.min.js',        
-        //Angular UI Router
-        'node_modules/angular-ui-router/release/angular-ui-router.js',
-        //All Typings
-        'node_modules/@types/**/*.d.ts',
-    ],
-    styles: {
-        src: 'app/assets/styles',
-        files: 'app/assets/styles/**/*.scss',
-        dest: 'wwwroot/styles'
-    },
-    appDestination : 'wwwroot/app'
-};
+var config = new Config();
+
+// Compile sass into CSS & auto-inject into browsers
+gulp.task('sass', function() {
+    return gulp.src(config.scss)
+        .pipe(sass())
+        .pipe(gulp.dest("./wwwroot"))
+        .pipe(browserSync.stream());
+});
+
+gulp.task('default', ['serve']);
 
 gulp.task('lib', function () {
-    gulp.src(paths.libs).pipe(gulp.dest('wwwroot/lib'));
+    return gulp.src(config.libs).pipe(gulp.dest('wwwroot/lib'));
 });
 
 gulp.task('clean', function () {
-    return del(['wwwroot/app/**/*']).then(['wwwroot/styles/**/*']);
+    return del(['wwwroot/**/*']);
 });
 
-gulp.task('typescript', function(cb) { 
-    exec('tsc', function(err, stdout, stderr){
-        console.log(stdout);
-        console.log(stderr);
-        cb(err);
+/**
+ * Compile TypeScript and include references to library and app .d.ts files.
+ */
+gulp.task('compile-ts', function () {
+    var sourceTsFiles = [config.allTypeScript,                //path to typescript files
+                         config.libraryTypeScriptDefinitions]; //reference to library .d.ts files
+
+    gulp.src(config.allTypeScript).pipe(gulp.dest(config.tsOutputPath));
+
+    var tsResult = gulp.src(sourceTsFiles)
+        .pipe(sourcemaps.init())
+        .pipe(tsProject());
+
+    tsResult.dts.pipe(gulp.dest(config.tsOutputPath));
+    return tsResult.js
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest(config.tsOutputPath));
+});
+
+// process JS files and return the stream. //The JS files are all outputs from typescript
+gulp.task('js', function () { //todo not needed for debugging
+    return gulp.src(config.watchJs)
+        //.pipe(browserify())
+        //.pipe(uglify())
+        .pipe(gulp.dest('./'));
+});
+
+// process html views and return the stream.
+gulp.task('html', function () { 
+    return gulp.src(config.views)
+                .pipe(gulp.dest('./wwwroot'));
+});
+
+// create a task that ensures the `js` task is complete before
+// reloading browsers
+gulp.task('js-watch', ['js'], function (done) {
+    browserSync.reload();
+    done();
+});
+
+// use default task to launch Browsersync and watch JS files
+gulp.task('serve', ['lib', 'compile-ts', 'html', 'sass'], function () {
+
+    // Serve files from the root of this project
+    browserSync.init({
+        server: {
+            baseDir: "./wwwroot"
+        }
     });
-});
 
-// A display error function, to format and make custom errors more uniform
-// Could be combined with gulp-util or npm colors for nicer output
-var displayError = function(error) {
-    // Initial building up of the error
-    var errorString = '[' + error.plugin + ']';
-    errorString += ' ' + error.message.replace("\n",''); // Removes new line at the end
-    // If the error contains the filename or line number add it to the string
-    if(error.fileName)
-        errorString += ' in ' + error.fileName;
-    if(error.lineNumber)
-        errorString += ' on line ' + error.lineNumber;
-    // This will output an error like the following:
-    // [gulp-sass] error message in file_name on line 1
-    console.error(errorString);
-}
-// Setting up the sass task - https://gist.github.com/mikestreety/9525414
-gulp.task('sass', function (){
-    // Taking the path from the above object
-    gulp.src(paths.styles.files)
-    // Sass options - make the output compressed and add the source map
-    // Also pull the include path from the paths object
-    .pipe(sass({
-        outputStyle: 'compressed',
-        sourceComments: 'map',
-        includePaths : [paths.styles.src]
-    }))
-    // If there is an error, don't stop compiling but use the custom displayError function
-    .on('error', function(err){
-        displayError(err);
-    })
-    // Pass the compiled sass through the prefixer with defined 
-    .pipe(prefix(
-        'last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'
-    ))
-    // Funally put the compiled sass into a css file
-    .pipe(gulp.dest(paths.styles.dest))
-});
-
-/* https://medium.com/@dickeyxxx/best-practices-for-building-angular-js-apps-266c1a4a6917#.a19vsw2wi */
-gulp.task('default', ['lib', 'sass', 'typescript'], function () {
-    gulp.src(paths.scripts.concat(paths.views))
-        .pipe(gulp.dest(paths.appDestination));
-
-    // Watch the files in the paths object, and when there is a change, fun the functions in the array
-	gulp.watch(paths.styles.files, ['sass'])
-    // Also when there is a change, display what file was changed, only showing the path after the 'sass folder'
-	.on('change', function(evt) {
-		console.log(
-			'[watcher] File ' + evt.path+ ' was ' + evt.type + ', compiling...'
-		);
-	});
-
-    gulp.watch(typeScriptFiles, ['typescript'])
-    .on('change', function(evt) {		
-        console.log(
-			'[watcher] File ' + evt.path + ' was ' + evt.type + ', compiling...'
-		);
-	});
+    // add browserSync.reload to the tasks array to make
+    // all browsers reload after tasks are complete.
+    gulp.watch(config.watchJs, ['js-watch']);
+    gulp.watch(config.scss, ['sass']);
+    gulp.watch(config.views, ['html']);
+    gulp.watch("wwwroot/**/*.html").on('change', browserSync.reload);
+    gulp.watch(config.allTypeScript, ['compile-ts']);
 });
