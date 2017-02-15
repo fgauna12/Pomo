@@ -7,15 +7,33 @@
     <!-- CSS -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- JS Libraries -->
-    <script src="lib/angular.min.js"></script>
-    <script src="lib/angular-ui-router.js"></script>
-    <script src="app.js"></script>
-    <script src="router.js"></script>
+    <script src="lib/system.js"></script>
+    <script>
+        System.config({
+            map : {
+                    'angular': 'lib/angular.min',
+                    'angular-ui-router': 'lib/angular-ui-router'
+                },
+            meta : {
+                format: 'cjs'
+            },
+            packages : {
+                './' : {
+                    defaultExtension: 'js'
+                }
+            }
+        });
+        System.import('./app.js').then(null, console.error.bind(console));
+    </script>
+    <!--<script src="lib/angular.min.js"></script>
+    <script src="lib/angular-ui-router.js"></script>-->
+    <!--<script src="app.js"></script>
+    <script src="router.js"></script>-->
     <!-- Controllers -->
-    <script src="shell/shell.js"></script>
-    <script src="pomodoro/pomodorosController.js"></script>
+    <!--<script src="shell/shell.js"></script>
+    <script src="pomodoro/pomodorosController.js"></script>-->
     <!-- Services -->
-    <script src="pomodoro/pomodoroService.js"></script>
+    <!--<script src="pomodoro/pomodoroService.js"></script>-->
 </head>
 
 <body ng-app="app">

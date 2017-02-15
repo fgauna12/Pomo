@@ -1,20 +1,18 @@
+import { module } from 'angular';
+import { IPagedResult, IPomodoro, IPomodoroService } from './pomodoroService';
 
-namespace app {
-    class PomodorosController {
-        title: string;
-        pomodoros: IPomodoro[];
-        static $inject: Array<string> = ['$scope', 'pomodoroService'];
-        constructor(public $scope: angular.IScope, public pomodoroService: app.IPomodoroService) {
-            this.title = "Hello World Dood";
-            this.init();
-        }
+export class PomodorosController {
+    title: string;
+    pomodoros: IPomodoro[];
+    static $inject: Array<string> = ['$scope', 'pomodoroService'];
+    constructor(public $scope: angular.IScope, public pomodoroService: IPomodoroService) {
+        this.title = "Hello World Dood This is pretty cool omg it refreshes so fast";
+        this.init();
+    }
 
-        init = () => {
-            this.pomodoroService.getAll().then((pagedResponse) => {
-                this.pomodoros = pagedResponse.results;
-            });
-        }
-    } 
-
-    angular.module('app').controller('PomodorosController', PomodorosController);
-}
+    init = () => {
+        this.pomodoroService.getAll().then((pagedResponse) => {
+            this.pomodoros = pagedResponse.results;
+        });
+    }
+} 

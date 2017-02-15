@@ -1,11 +1,5 @@
+export class ShellController {    
 
-namespace app {
-
-    class ShellController {
-        
-
-    }
-
-    angular.module("app").controller('ShellController', ShellController);
 }
+
 

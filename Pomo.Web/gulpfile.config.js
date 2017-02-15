@@ -23,6 +23,8 @@ var GulpConfig = (function () {
             'node_modules/angular-ui-router/release/angular-ui-router.js',
             //All Typings
             'node_modules/@types/**/*.d.ts',
+            //SystemJs
+            'node_modules/SystemJs/dist/system.js'
         ]
     }
     return gulpConfig;
