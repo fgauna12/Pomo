@@ -1,3 +1,4 @@
-<div class="">
-    {{vm.title}}
+<div class="" ng-repeat="pomodoro in vm.pomodoros">
+    {{}}
 </div>
+<div ng-hide="vm.pomodoros.length">No Pomorodos</div>

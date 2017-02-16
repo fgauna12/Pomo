@@ -74,6 +74,26 @@ gulp.task('serve', ['lib', 'compile-ts', 'html', 'sass'], function () {
 
     // Serve files from the root of this project
     browserSync.init({
+        proxy: "localhost:5000",
+        // server: {
+        //     baseDir: "./wwwroot"
+        // }
+    });
+
+    // add browserSync.reload to the tasks array to make
+    // all browsers reload after tasks are complete.
+    gulp.watch(config.watchJs, ['js-watch']);
+    gulp.watch(config.scss, ['sass']);
+    gulp.watch(config.views, ['html']);
+    gulp.watch("wwwroot/**/*.html").on('change', browserSync.reload);
+    gulp.watch(config.allTypeScript, ['compile-ts']);
+});
+
+// use default task to launch Browsersync and watch JS files
+gulp.task('serve-mock', ['lib', 'compile-ts', 'html', 'sass'], function () {
+
+    // Serve files from the root of this project
+    browserSync.init({
         server: {
             baseDir: "./wwwroot"
         }

@@ -24,7 +24,8 @@
                 "$lessCompile",
                 "$tsc",
                 "$jshint"
-            ]
+            ],
+            "isBackground" : true
         }
     ]
 }
